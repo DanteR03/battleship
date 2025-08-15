@@ -77,4 +77,14 @@ export class Gameboard {
       this.#board[coordsX][coordsY] = "miss";
     }
   }
+
+  allSunk() {
+    let result = true;
+    for (const ship of this.#ships) {
+      if (ship.getSunk() === false) {
+        result = false;
+      }
+    }
+    return result;
+  }
 }

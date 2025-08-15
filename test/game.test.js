@@ -50,7 +50,6 @@ describe("Gameboard class", () => {
 
     it("Should place ships at specified coordinates and record their placement", () => {
       testGameboard.placeShip([0, 0], "y", 3);
-
       expect(ships).not.toHaveLength(0);
       expect(board[0][0]).toBe(0);
       expect(board[0][2]).toBe(0);
@@ -60,9 +59,15 @@ describe("Gameboard class", () => {
     it("Should record attacks targeting specified coordinates", () => {
       testGameboard.receiveAttack([0, 2]);
       testGameboard.receiveAttack([1, 1]);
-
       expect(board[0][2]).toBe("hit");
       expect(board[1][1]).toBe("miss");
+    });
+
+    it("Should report if all ships are sunk", () => {
+      expect(testGameboard.allSunk()).toBe(false);
+      testGameboard.receiveAttack([0, 1]);
+      testGameboard.receiveAttack([0, 0]);
+      expect(testGameboard.allSunk()).toBe(true);
     });
   });
 });
