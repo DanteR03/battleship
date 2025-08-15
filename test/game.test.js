@@ -51,9 +51,9 @@ describe("Gameboard class", () => {
       testGameboard.placeShip([0, 0], "y", 3);
 
       expect(testGameboard.getShips()).not.toHaveLength(0);
-      expect(board[0][0][0]).toBe(0);
-      expect(board[0][2][0]).toBe(0);
-      expect(board[0][3][0]).toBe(undefined);
+      expect(board[0][0]).toBe(0);
+      expect(board[0][2]).toBe(0);
+      expect(board[0][3]).toBe(null);
     });
   });
 });
