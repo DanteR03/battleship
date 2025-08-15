@@ -63,4 +63,18 @@ export class Gameboard {
   getShips() {
     return this.#ships;
   }
+
+  receiveAttack(coords) {
+    const coordsX = coords[0];
+    const coordsY = coords[1];
+    const hitPosition = this.#board[coordsX][coordsY];
+
+    if (Number.isInteger(hitPosition)) {
+      this.#board[coordsX][coordsY] = "hit";
+      this.#ships[hitPosition].hit();
+      this.#ships[hitPosition].isSunk();
+    } else {
+      this.#board[coordsX][coordsY] = "miss";
+    }
+  }
 }

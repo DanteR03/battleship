@@ -41,6 +41,7 @@ describe("Gameboard class", () => {
     const testGameboard = new Gameboard();
     testGameboard.fillBoard();
     const board = testGameboard.getBoard();
+    const ships = testGameboard.getShips();
 
     it("Should return a gameboard object with an empty board", () => {
       expect(board).toHaveLength(10);
@@ -50,10 +51,18 @@ describe("Gameboard class", () => {
     it("Should place ships at specified coordinates and record their placement", () => {
       testGameboard.placeShip([0, 0], "y", 3);
 
-      expect(testGameboard.getShips()).not.toHaveLength(0);
+      expect(ships).not.toHaveLength(0);
       expect(board[0][0]).toBe(0);
       expect(board[0][2]).toBe(0);
       expect(board[0][3]).toBe(null);
+    });
+
+    it("Should record attacks targeting specified coordinates", () => {
+      testGameboard.receiveAttack([0, 2]);
+      testGameboard.receiveAttack([1, 1]);
+
+      expect(board[0][2]).toBe("hit");
+      expect(board[1][1]).toBe("miss");
     });
   });
 });
