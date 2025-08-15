@@ -1,4 +1,4 @@
-import { Ship } from "../src/game.js";
+import { Ship, Gameboard } from "../src/game.js";
 
 describe("Ship class", () => {
   describe("TestShipOne", () => {
@@ -32,6 +32,28 @@ describe("Ship class", () => {
       testShip2.hit();
       testShip2.isSunk();
       expect(testShip2.getSunk()).toBe(false);
+    });
+  });
+});
+
+describe("Gameboard class", () => {
+  describe("TestGameboardOne", () => {
+    const testGameboard = new Gameboard();
+    testGameboard.fillBoard();
+    const board = testGameboard.getBoard();
+
+    it("Should return a gameboard object with an empty board", () => {
+      expect(board).toHaveLength(10);
+      expect(board[0]).toHaveLength(10);
+    });
+
+    it("Should place ships at specified coordinates and record their placement", () => {
+      testGameboard.placeShip([0, 0], "y", 3);
+
+      expect(testGameboard.getShips()).not.toHaveLength(0);
+      expect(board[0][0][0]).toBe(0);
+      expect(board[0][2][0]).toBe(0);
+      expect(board[0][3][0]).toBe(undefined);
     });
   });
 });

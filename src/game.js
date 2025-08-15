@@ -25,3 +25,42 @@ export class Ship {
     return this.#sunk;
   }
 }
+
+export class Gameboard {
+  #board = [];
+  #ships = [];
+
+  fillBoard() {
+    for (let i = 0; i < 10; i++) {
+      const array = [];
+      for (let i = 0; i < 10; i++) {
+        array.push([]);
+      }
+      this.#board.push(array);
+    }
+  }
+
+  getBoard() {
+    return this.#board;
+  }
+
+  placeShip(start, axis, length) {
+    const coords = start;
+    this.#ships.push(new Ship(length));
+    if (axis === "x") {
+      for (let i = 0; i < length; i++) {
+        this.#board[coords[0]][coords[1]].push(this.#ships.length - 1);
+        coords[0]++;
+      }
+    } else if (axis === "y") {
+      for (let i = 0; i < length; i++) {
+        this.#board[coords[0]][coords[1]].push(this.#ships.length - 1);
+        coords[1]++;
+      }
+    }
+  }
+
+  getShips() {
+    return this.#ships;
+  }
+}
