@@ -47,12 +47,12 @@ export class Gameboard {
   placeShip(start, axis, length) {
     const coords = start;
     this.#ships.push(new Ship(length));
-    if (axis === "x") {
+    if (axis === "y") {
       for (let i = 0; i < length; i++) {
         this.#board[coords[0]][coords[1]] = this.#ships.length - 1;
         coords[0]++;
       }
-    } else if (axis === "y") {
+    } else if (axis === "x") {
       for (let i = 0; i < length; i++) {
         this.#board[coords[0]][coords[1]] = this.#ships.length - 1;
         coords[1]++;
