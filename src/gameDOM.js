@@ -9,11 +9,20 @@ export function initializeBoard() {
   const playerOneBoard = playerOne.gameBoard.getBoard();
   const playerTwoBoard = playerTwo.gameBoard.getBoard();
   const playerBoardContainers = document.querySelectorAll(".board-container");
+  playerBoardContainers[0].addEventListener("click", (e) => {
+    registerAttack(playerOne, e.target.id.split(","));
+    displayBoard(playerOneBoard, playerBoardContainers[0]);
+  });
+  playerBoardContainers[1].addEventListener("click", (e) => {
+    registerAttack(playerTwo, e.target.id.split(","));
+    displayBoard(playerTwoBoard, playerBoardContainers[1]);
+  });
   displayBoard(playerOneBoard, playerBoardContainers[0]);
   displayBoard(playerTwoBoard, playerBoardContainers[1]);
 }
 
 function displayBoard(board, boardContainer) {
+  boardContainer.innerHTML = "";
   const xArray = board;
   let xCoord = 0;
   let yCoord = 0;
@@ -42,4 +51,8 @@ function populateBoardPredetermined(board1, board2) {
   board2.placeShip([5, 4], "x", 3);
   board2.placeShip([6, 7], "y", 3);
   board2.placeShip([0, 0], "x", 2);
+}
+
+function registerAttack(player, coords) {
+  player.gameBoard.receiveAttack(coords);
 }

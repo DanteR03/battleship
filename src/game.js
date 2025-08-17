@@ -73,7 +73,7 @@ export class Gameboard {
       this.#board[coordsX][coordsY] = "hit";
       this.#ships[hitPosition].hit();
       this.#ships[hitPosition].isSunk();
-    } else {
+    } else if (hitPosition !== "hit") {
       this.#board[coordsX][coordsY] = "miss";
     }
   }
