@@ -5,6 +5,7 @@ export function initializeBoard() {
   const playerTwo = new Player();
   playerOne.gameBoard.fillBoard();
   playerTwo.gameBoard.fillBoard();
+  populateBoardPredetermined(playerOne.gameBoard, playerTwo.gameBoard);
   const playerOneBoard = playerOne.gameBoard.getBoard();
   const playerTwoBoard = playerTwo.gameBoard.getBoard();
   const playerBoardContainers = document.querySelectorAll(".board-container");
@@ -14,12 +15,31 @@ export function initializeBoard() {
 
 function displayBoard(board, boardContainer) {
   const xArray = board;
+  let xCoord = 0;
+  let yCoord = 0;
   for (const yArray of xArray) {
     for (const cell of yArray) {
       const boardCell = document.createElement("div");
       boardCell.classList.add("board-cell");
+      boardCell.id = [xCoord, yCoord];
       boardCell.textContent = cell;
       boardContainer.append(boardCell);
+      yCoord++;
     }
+    yCoord = 0;
+    xCoord++;
   }
+}
+
+function populateBoardPredetermined(board1, board2) {
+  board1.placeShip([0, 0], "x", 5);
+  board1.placeShip([2, 4], "x", 4);
+  board1.placeShip([5, 0], "y", 3);
+  board1.placeShip([6, 2], "x", 3);
+  board1.placeShip([8, 8], "x", 2);
+  board2.placeShip([1, 4], "x", 5);
+  board2.placeShip([2, 2], "y", 4);
+  board2.placeShip([5, 4], "x", 3);
+  board2.placeShip([6, 7], "y", 3);
+  board2.placeShip([0, 0], "x", 2);
 }
