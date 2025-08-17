@@ -1,4 +1,4 @@
-import { Ship, Gameboard } from "../src/game.js";
+import { Ship, Gameboard, Player } from "../src/game.js";
 
 describe("Ship class", () => {
   describe("TestShipOne", () => {
@@ -68,6 +68,17 @@ describe("Gameboard class", () => {
       testGameboard.receiveAttack([0, 1]);
       testGameboard.receiveAttack([0, 0]);
       expect(testGameboard.allSunk()).toBe(true);
+    });
+  });
+});
+
+describe("Player class", () => {
+  describe("PlayerOne", () => {
+    const playerOne = new Player();
+    playerOne.gameBoard.fillBoard();
+
+    it("Should return a Player object with its own gameboard", () => {
+      expect(playerOne.gameBoard).toBeInstanceOf(Gameboard);
     });
   });
 });
