@@ -10,12 +10,16 @@ export function initializeBoard() {
   const playerTwoBoard = playerTwo.gameBoard.getBoard();
   const playerBoardContainers = document.querySelectorAll(".board-container");
   playerBoardContainers[0].addEventListener("click", (e) => {
-    registerAttack(playerOne, e.target.id.split(","));
-    displayBoard(playerOneBoard, playerBoardContainers[0]);
+    if (e.target.classList[0] === "board-cell") {
+      registerAttack(playerOne, e.target.id.split(","));
+      displayBoard(playerOneBoard, playerBoardContainers[0]);
+    }
   });
   playerBoardContainers[1].addEventListener("click", (e) => {
-    registerAttack(playerTwo, e.target.id.split(","));
-    displayBoard(playerTwoBoard, playerBoardContainers[1]);
+    if (e.target.classList[0] === "board-cell") {
+      registerAttack(playerTwo, e.target.id.split(","));
+      displayBoard(playerTwoBoard, playerBoardContainers[1]);
+    }
   });
   displayBoard(playerOneBoard, playerBoardContainers[0]);
   displayBoard(playerTwoBoard, playerBoardContainers[1]);
