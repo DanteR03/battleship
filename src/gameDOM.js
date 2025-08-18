@@ -1,24 +1,37 @@
 import { Player } from "./game.js";
 
+let activePlayer;
+
 export function initializeBoard() {
   const playerOne = new Player();
   const playerTwo = new Player();
   playerOne.gameBoard.fillBoard();
   playerTwo.gameBoard.fillBoard();
+  activePlayer = playerOne;
   populateBoardPredetermined(playerOne.gameBoard, playerTwo.gameBoard);
   const playerOneBoard = playerOne.gameBoard.getBoard();
   const playerTwoBoard = playerTwo.gameBoard.getBoard();
   const playerBoardContainers = document.querySelectorAll(".board-container");
   playerBoardContainers[0].addEventListener("click", (e) => {
-    if (e.target.classList[0] === "board-cell") {
+    if (e.target.classList[0] === "board-cell" && activePlayer !== playerOne) {
       registerAttack(playerOne, e.target.id.split(","));
       displayBoard(playerOneBoard, playerBoardContainers[0]);
+      if (playerOne.gameBoard.allSunk() === true) {
+        console.log("Player Two wins!");
+      } else {
+        activePlayer = playerOne;
+      }
     }
   });
   playerBoardContainers[1].addEventListener("click", (e) => {
-    if (e.target.classList[0] === "board-cell") {
+    if (e.target.classList[0] === "board-cell" && activePlayer !== playerTwo) {
       registerAttack(playerTwo, e.target.id.split(","));
       displayBoard(playerTwoBoard, playerBoardContainers[1]);
+      if (playerTwo.gameBoard.allSunk() === true) {
+        console.log("Player One wins!");
+      } else {
+        activePlayer = playerTwo;
+      }
     }
   });
   displayBoard(playerOneBoard, playerBoardContainers[0]);
@@ -60,3 +73,4 @@ function populateBoardPredetermined(board1, board2) {
 function registerAttack(player, coords) {
   player.gameBoard.receiveAttack(coords);
 }
+
