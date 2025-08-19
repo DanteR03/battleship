@@ -37,3 +37,15 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.ship {
+  background-color: black;
+}
+
+.ship.marked {
+  background-color: red;
+}
+
+.marked {
+  background-color: yellow;
+}

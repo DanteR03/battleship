@@ -13,9 +13,13 @@ export function initializeBoard() {
   const playerTwoBoard = playerTwo.gameBoard.getBoard();
   const playerBoardContainers = document.querySelectorAll(".board-container");
   playerBoardContainers[0].addEventListener("click", (e) => {
-    if (e.target.classList[0] === "board-cell" && activePlayer !== playerOne) {
+    if (
+      e.target.id.length === 3 &&
+      activePlayer !== playerOne &&
+      e.target.classList.contains("marked") === false
+    ) {
       registerAttack(playerOne, e.target.id.split(","));
-      displayBoard(playerOneBoard, playerBoardContainers[0]);
+      e.target.classList.add("marked");
       if (playerOne.gameBoard.allSunk() === true) {
         console.log("Player Two wins!");
       } else {
@@ -24,9 +28,13 @@ export function initializeBoard() {
     }
   });
   playerBoardContainers[1].addEventListener("click", (e) => {
-    if (e.target.classList[0] === "board-cell" && activePlayer !== playerTwo) {
+    if (
+      e.target.id.length === 3 &&
+      activePlayer !== playerTwo &&
+      e.target.classList.contains("marked") === false
+    ) {
       registerAttack(playerTwo, e.target.id.split(","));
-      displayBoard(playerTwoBoard, playerBoardContainers[1]);
+      e.target.classList.add("marked");
       if (playerTwo.gameBoard.allSunk() === true) {
         console.log("Player One wins!");
       } else {
@@ -48,7 +56,9 @@ function displayBoard(board, boardContainer) {
       const boardCell = document.createElement("div");
       boardCell.classList.add("board-cell");
       boardCell.id = [xCoord, yCoord];
-      boardCell.textContent = cell;
+      if (Number.isInteger(cell)) {
+        boardCell.classList.add("ship");
+      }
       boardContainer.append(boardCell);
       yCoord++;
     }
@@ -73,4 +83,3 @@ function populateBoardPredetermined(board1, board2) {
 function registerAttack(player, coords) {
   player.gameBoard.receiveAttack(coords);
 }
-
