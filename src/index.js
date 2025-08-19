@@ -1,4 +1,4 @@
 import "./styles.css";
-import { initializeBoard } from "./gameDOM.js";
+import { initializeBoardPlayer, initializeBoardComputer } from "./gameDOM.js";
 
-initializeBoard();
+initializeBoardComputer();

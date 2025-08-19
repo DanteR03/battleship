@@ -1,27 +1,42 @@
 import { Player } from "./game.js";
 
-let activePlayer;
+const playerOne = new Player();
+const playerTwo = new Player();
+const playerOneBoard = playerOne.gameBoard.getBoard();
+const playerTwoBoard = playerTwo.gameBoard.getBoard();
+const playerBoardContainers = document.querySelectorAll(".board");
+let axis = "X";
+let activePlayer = playerOne;
+let gameOver = false;
+const axisButton = document.querySelector("button");
+axisButton.addEventListener("click", () => {
+  if (axis === "X") {
+    axis = "Y";
+    axisButton.textContent = "Axis: Y";
+  } else {
+    axis = "X";
+    axisButton.textContent = "Axis: X";
+  }
+});
 
-export function initializeBoard() {
-  const playerOne = new Player();
-  const playerTwo = new Player();
+export function initializeBoardPlayer() {
   playerOne.gameBoard.fillBoard();
   playerTwo.gameBoard.fillBoard();
-  activePlayer = playerOne;
   populateBoardPredetermined(playerOne.gameBoard, playerTwo.gameBoard);
-  const playerOneBoard = playerOne.gameBoard.getBoard();
-  const playerTwoBoard = playerTwo.gameBoard.getBoard();
-  const playerBoardContainers = document.querySelectorAll(".board-container");
+  displayBoard(playerOneBoard, playerBoardContainers[0]);
+  displayBoard(playerTwoBoard, playerBoardContainers[1]);
   playerBoardContainers[0].addEventListener("click", (e) => {
     if (
       e.target.id.length === 3 &&
       activePlayer !== playerOne &&
-      e.target.classList.contains("marked") === false
+      e.target.classList.contains("marked") === false &&
+      gameOver === false
     ) {
       registerAttack(playerOne, e.target.id.split(","));
       e.target.classList.add("marked");
       if (playerOne.gameBoard.allSunk() === true) {
         console.log("Player Two wins!");
+        gameOver === true;
       } else {
         activePlayer = playerOne;
       }
@@ -31,19 +46,45 @@ export function initializeBoard() {
     if (
       e.target.id.length === 3 &&
       activePlayer !== playerTwo &&
-      e.target.classList.contains("marked") === false
+      e.target.classList.contains("marked") === false &&
+      gameOver === false
     ) {
       registerAttack(playerTwo, e.target.id.split(","));
       e.target.classList.add("marked");
       if (playerTwo.gameBoard.allSunk() === true) {
         console.log("Player One wins!");
+        gameOver === true;
       } else {
         activePlayer = playerTwo;
       }
     }
   });
+}
+
+export function initializeBoardComputer() {
+  playerOne.gameBoard.fillBoard();
+  playerTwo.gameBoard.fillBoard();
+  populateBoardPredetermined(playerOne.gameBoard, playerTwo.gameBoard);
   displayBoard(playerOneBoard, playerBoardContainers[0]);
   displayBoard(playerTwoBoard, playerBoardContainers[1]);
+  playerBoardContainers[1].addEventListener("click", (e) => {
+    if (
+      e.target.id.length === 3 &&
+      activePlayer !== playerTwo &&
+      e.target.classList.contains("marked") === false &&
+      gameOver === false
+    ) {
+      registerAttack(playerTwo, e.target.id.split(","));
+      e.target.classList.add("marked");
+      if (playerTwo.gameBoard.allSunk() === true) {
+        console.log("Player One wins!");
+        gameOver === true;
+      } else {
+        activePlayer = playerTwo;
+        computerAttack(playerOneBoard);
+      }
+    }
+  });
 }
 
 function displayBoard(board, boardContainer) {
@@ -68,18 +109,37 @@ function displayBoard(board, boardContainer) {
 }
 
 function populateBoardPredetermined(board1, board2) {
-  board1.placeShip([0, 0], "x", 5);
-  board1.placeShip([2, 4], "x", 4);
-  board1.placeShip([5, 0], "y", 3);
-  board1.placeShip([6, 2], "x", 3);
-  board1.placeShip([8, 8], "x", 2);
-  board2.placeShip([1, 4], "x", 5);
-  board2.placeShip([2, 2], "y", 4);
-  board2.placeShip([5, 4], "x", 3);
-  board2.placeShip([6, 7], "y", 3);
-  board2.placeShip([0, 0], "x", 2);
+  placeShip(board1, [0, 0], "x", 5);
+  placeShip(board1, [2, 4], "x", 4);
+  placeShip(board1, [5, 0], "y", 3);
+  placeShip(board1, [6, 2], "x", 3);
+  placeShip(board1, [8, 8], "x", 2);
+  placeShip(board2, [1, 4], "x", 5);
+  placeShip(board2, [2, 2], "y", 4);
+  placeShip(board2, [5, 4], "x", 3);
+  placeShip(board2, [6, 7], "y", 3);
+  placeShip(board2, [0, 0], "x", 2);
+}
+
+function placeShip(board, start, axis, length) {
+  board.placeShip(start, axis, length);
 }
 
 function registerAttack(player, coords) {
   player.gameBoard.receiveAttack(coords);
+}
+
+function computerAttack(board) {
+  let x = Math.floor(Math.random() * 10);
+  let y = Math.floor(Math.random() * 10);
+  while (board[x][y] === "hit" || board[x][y] === "miss") {
+    x = Math.floor(Math.random() * 10);
+    y = Math.floor(Math.random() * 10);
+  }
+  const coords = [x, y];
+  const coordsId = coords.join();
+  const boardCell = document.querySelector(`#${CSS.escape(coordsId)}`);
+  boardCell.classList.add("marked");
+  registerAttack(playerOne, coords);
+  activePlayer = playerOne;
 }
