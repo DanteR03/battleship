@@ -19,7 +19,8 @@ axisButton.addEventListener("click", () => {
   }
 });
 
-export function initializeBoardPlayer() {
+function startGamePlayer() {
+  hideStartButtons();
   playerOne.gameBoard.fillBoard();
   playerTwo.gameBoard.fillBoard();
   populateBoardPredetermined(playerOne.gameBoard, playerTwo.gameBoard);
@@ -61,7 +62,8 @@ export function initializeBoardPlayer() {
   });
 }
 
-export function initializeBoardComputer() {
+function startGameComputer() {
+  hideStartButtons();
   playerOne.gameBoard.fillBoard();
   playerTwo.gameBoard.fillBoard();
   populateBoardPredetermined(playerOne.gameBoard, playerTwo.gameBoard);
@@ -142,4 +144,18 @@ function computerAttack(board) {
   boardCell.classList.add("marked");
   registerAttack(playerOne, coords);
   activePlayer = playerOne;
+}
+
+function hideStartButtons() {
+  const playerStartButton = document.querySelector(".player-start-button");
+  const computerStartButton = document.querySelector(".computer-start-button");
+  playerStartButton.classList.add("hidden");
+  computerStartButton.classList.add("hidden");
+}
+
+export function initializeGame() {
+  const playerStartButton = document.querySelector(".player-start-button");
+  const computerStartButton = document.querySelector(".computer-start-button");
+  playerStartButton.addEventListener("click", () => startGamePlayer());
+  computerStartButton.addEventListener("click", () => startGameComputer());
 }
