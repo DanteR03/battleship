@@ -7,7 +7,6 @@ const playerTwoBoard = playerTwo.gameBoard.getBoard();
 const playerBoardContainers = document.querySelectorAll(".board");
 let axis = "X";
 let activePlayer = playerOne;
-let gameOver = false;
 const axisButton = document.querySelector("button");
 axisButton.addEventListener("click", () => {
   if (axis === "X") {
@@ -29,15 +28,14 @@ function startGamePlayer() {
   playerBoardContainers[0].addEventListener("click", (e) => {
     if (
       e.target.id.length === 3 &&
-      activePlayer !== playerOne &&
-      e.target.classList.contains("marked") === false &&
-      gameOver === false
+      activePlayer === playerOne &&
+      e.target.classList.contains("marked") === false
     ) {
       registerAttack(playerOne, e.target.id.split(","));
       e.target.classList.add("marked");
       if (playerOne.gameBoard.allSunk() === true) {
         console.log("Player Two wins!");
-        gameOver === true;
+        activePlayer = "";
       } else {
         activePlayer = playerOne;
       }
@@ -46,15 +44,14 @@ function startGamePlayer() {
   playerBoardContainers[1].addEventListener("click", (e) => {
     if (
       e.target.id.length === 3 &&
-      activePlayer !== playerTwo &&
-      e.target.classList.contains("marked") === false &&
-      gameOver === false
+      activePlayer === playerTwo &&
+      e.target.classList.contains("marked") === false
     ) {
       registerAttack(playerTwo, e.target.id.split(","));
       e.target.classList.add("marked");
       if (playerTwo.gameBoard.allSunk() === true) {
         console.log("Player One wins!");
-        gameOver === true;
+        activePlayer = "";
       } else {
         activePlayer = playerTwo;
       }
@@ -72,15 +69,14 @@ function startGameComputer() {
   playerBoardContainers[1].addEventListener("click", (e) => {
     if (
       e.target.id.length === 3 &&
-      activePlayer !== playerTwo &&
-      e.target.classList.contains("marked") === false &&
-      gameOver === false
+      activePlayer === playerOne &&
+      e.target.classList.contains("marked") === false
     ) {
       registerAttack(playerTwo, e.target.id.split(","));
       e.target.classList.add("marked");
       if (playerTwo.gameBoard.allSunk() === true) {
         console.log("Player One wins!");
-        gameOver === true;
+        activePlayer = "";
       } else {
         activePlayer = playerTwo;
         computerAttack(playerOneBoard);
