@@ -72,7 +72,7 @@ function startGameComputer() {
         activePlayer = "";
       } else {
         activePlayer = playerTwo;
-        computerAttack(playerOneBoard);
+        computerAttack();
       }
     }
   });
@@ -127,10 +127,10 @@ function registerAttack(player, coords) {
   displayBoard(playerTwoBoard, playerBoardContainers[1]);
 }
 
-function computerAttack(board) {
+function computerAttack() {
   let x = Math.floor(Math.random() * 10);
   let y = Math.floor(Math.random() * 10);
-  while (board[x][y] === "hit" || board[x][y] === "miss") {
+  while (playerOneBoard[x][y] === "hit" || playerOneBoard[x][y] === "miss") {
     x = Math.floor(Math.random() * 10);
     y = Math.floor(Math.random() * 10);
   }
@@ -139,7 +139,12 @@ function computerAttack(board) {
   const boardCell = document.querySelector(`#${CSS.escape(coordsId)}`);
   boardCell.classList.add("marked");
   registerAttack(playerOne, coords);
-  activePlayer = playerOne;
+  if (playerOne.gameBoard.allSunk() === false) {
+    activePlayer = playerOne;
+  } else {
+    console.log("Player Two wins!");
+    activePlayer = "";
+  }
 }
 
 function hideStartButtons() {
