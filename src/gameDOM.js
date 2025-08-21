@@ -20,19 +20,16 @@ axisButton.addEventListener("click", () => {
 
 function startGamePlayer() {
   hideStartButtons();
-  playerOne.gameBoard.fillBoard();
-  playerTwo.gameBoard.fillBoard();
   populateBoardPredetermined(playerOne.gameBoard, playerTwo.gameBoard);
   displayBoard(playerOneBoard, playerBoardContainers[0]);
   displayBoard(playerTwoBoard, playerBoardContainers[1]);
   playerBoardContainers[0].addEventListener("click", (e) => {
     if (
       e.target.id.length === 3 &&
-      activePlayer === playerOne &&
+      activePlayer === playerTwo &&
       e.target.classList.contains("marked") === false
     ) {
       registerAttack(playerOne, e.target.id.split(","));
-      e.target.classList.add("marked");
       if (playerOne.gameBoard.allSunk() === true) {
         console.log("Player Two wins!");
         activePlayer = "";
@@ -44,11 +41,10 @@ function startGamePlayer() {
   playerBoardContainers[1].addEventListener("click", (e) => {
     if (
       e.target.id.length === 3 &&
-      activePlayer === playerTwo &&
+      activePlayer === playerOne &&
       e.target.classList.contains("marked") === false
     ) {
       registerAttack(playerTwo, e.target.id.split(","));
-      e.target.classList.add("marked");
       if (playerTwo.gameBoard.allSunk() === true) {
         console.log("Player One wins!");
         activePlayer = "";
@@ -61,8 +57,6 @@ function startGamePlayer() {
 
 function startGameComputer() {
   hideStartButtons();
-  playerOne.gameBoard.fillBoard();
-  playerTwo.gameBoard.fillBoard();
   populateBoardPredetermined(playerOne.gameBoard, playerTwo.gameBoard);
   displayBoard(playerOneBoard, playerBoardContainers[0]);
   displayBoard(playerTwoBoard, playerBoardContainers[1]);
@@ -73,7 +67,6 @@ function startGameComputer() {
       e.target.classList.contains("marked") === false
     ) {
       registerAttack(playerTwo, e.target.id.split(","));
-      e.target.classList.add("marked");
       if (playerTwo.gameBoard.allSunk() === true) {
         console.log("Player One wins!");
         activePlayer = "";
@@ -97,6 +90,11 @@ function displayBoard(board, boardContainer) {
       boardCell.id = [xCoord, yCoord];
       if (Number.isInteger(cell)) {
         boardCell.classList.add("ship");
+      } else if (cell === "hit") {
+        boardCell.classList.add("ship");
+        boardCell.classList.add("marked");
+      } else if (cell === "miss") {
+        boardCell.classList.add("marked");
       }
       boardContainer.append(boardCell);
       yCoord++;
@@ -125,6 +123,8 @@ function placeShip(board, start, axis, length) {
 
 function registerAttack(player, coords) {
   player.gameBoard.receiveAttack(coords);
+  displayBoard(playerOneBoard, playerBoardContainers[0]);
+  displayBoard(playerTwoBoard, playerBoardContainers[1]);
 }
 
 function computerAttack(board) {
@@ -150,6 +150,10 @@ function hideStartButtons() {
 }
 
 export function initializeGame() {
+  playerOne.gameBoard.fillBoard();
+  playerTwo.gameBoard.fillBoard();
+  displayBoard(playerOneBoard, playerBoardContainers[0]);
+  displayBoard(playerTwoBoard, playerBoardContainers[1]);
   const playerStartButton = document.querySelector(".player-start-button");
   const computerStartButton = document.querySelector(".computer-start-button");
   playerStartButton.addEventListener("click", () => startGamePlayer());
