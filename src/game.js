@@ -59,14 +59,17 @@ export class Gameboard {
         coords.push(coordsNext);
       }
     }
-    if (
-      coords[coords.length - 1][0] <= 9 &&
-      coords[coords.length - 1][0] >= 0 &&
-      coords[coords.length - 1][1] <= 9 &&
-      coords[coords.length - 1][1] >= 0
-    ) {
+    const filteredCoords = coords.filter(
+      (coord) =>
+        coord[0] <= 9 &&
+        coord[0] >= 0 &&
+        coord[1] <= 9 &&
+        coord[1] >= 0 &&
+        this.#board[coord[0]][coord[1]] === null,
+    );
+    if (filteredCoords.length === coords.length) {
       this.#ships.push(new Ship(length));
-      for (const coord of coords) {
+      for (const coord of filteredCoords) {
         this.#board[coord[0]][coord[1]] = this.#ships.length - 1;
       }
     }
