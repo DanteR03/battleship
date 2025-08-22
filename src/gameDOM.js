@@ -2,9 +2,6 @@ import { Player } from "./game.js";
 
 const playerOne = new Player();
 const playerTwo = new Player();
-const playerOneBoard = playerOne.gameBoard.getBoard();
-const playerTwoBoard = playerTwo.gameBoard.getBoard();
-const playerBoardContainers = document.querySelectorAll(".board");
 let axis = "X";
 let activePlayer = playerOne;
 const axisButton = document.querySelector("button");
@@ -21,8 +18,9 @@ axisButton.addEventListener("click", () => {
 function startGamePlayer() {
   hideStartButtons();
   populateBoardPredetermined(playerOne.gameBoard, playerTwo.gameBoard);
-  displayBoard(playerOneBoard, playerBoardContainers[0]);
-  displayBoard(playerTwoBoard, playerBoardContainers[1]);
+  displayBoard();
+  displayBoard();
+  const playerBoardContainers = document.querySelectorAll(".board");
   playerBoardContainers[0].addEventListener("click", (e) => {
     if (
       e.target.id.length === 3 &&
@@ -58,8 +56,9 @@ function startGamePlayer() {
 function startGameComputer() {
   hideStartButtons();
   populateBoardPredetermined(playerOne.gameBoard, playerTwo.gameBoard);
-  displayBoard(playerOneBoard, playerBoardContainers[0]);
-  displayBoard(playerTwoBoard, playerBoardContainers[1]);
+  displayBoard();
+  displayBoard();
+  const playerBoardContainers = document.querySelectorAll(".board");
   playerBoardContainers[1].addEventListener("click", (e) => {
     if (
       e.target.id.length === 3 &&
@@ -78,12 +77,17 @@ function startGameComputer() {
   });
 }
 
-function displayBoard(board, boardContainer) {
-  boardContainer.innerHTML = "";
-  const xArray = board;
+function displayBoard() {
+  const playerOneBoard = playerOne.gameBoard.getBoard();
+  const playerTwoBoard = playerTwo.gameBoard.getBoard();
+  const playerBoardContainers = document.querySelectorAll(".board");
+  playerBoardContainers[0].innerHTML = "";
+  playerBoardContainers[1].innerHTML = "";
+  const boardOneXArray = playerOneBoard;
+  const boardTwoXArray = playerTwoBoard;
   let xCoord = 0;
   let yCoord = 0;
-  for (const yArray of xArray) {
+  for (const yArray of boardOneXArray) {
     for (const cell of yArray) {
       const boardCell = document.createElement("div");
       boardCell.classList.add("board-cell");
@@ -96,7 +100,28 @@ function displayBoard(board, boardContainer) {
       } else if (cell === "miss") {
         boardCell.classList.add("marked");
       }
-      boardContainer.append(boardCell);
+      playerBoardContainers[0].append(boardCell);
+      yCoord++;
+    }
+    yCoord = 0;
+    xCoord++;
+  }
+  xCoord = 0;
+  yCoord = 0;
+  for (const yArray of boardTwoXArray) {
+    for (const cell of yArray) {
+      const boardCell = document.createElement("div");
+      boardCell.classList.add("board-cell");
+      boardCell.id = [xCoord, yCoord];
+      if (Number.isInteger(cell)) {
+        boardCell.classList.add("ship");
+      } else if (cell === "hit") {
+        boardCell.classList.add("ship");
+        boardCell.classList.add("marked");
+      } else if (cell === "miss") {
+        boardCell.classList.add("marked");
+      }
+      playerBoardContainers[1].append(boardCell);
       yCoord++;
     }
     yCoord = 0;
@@ -123,11 +148,12 @@ function placeShip(board, start, axis, length) {
 
 function registerAttack(player, coords) {
   player.gameBoard.receiveAttack(coords);
-  displayBoard(playerOneBoard, playerBoardContainers[0]);
-  displayBoard(playerTwoBoard, playerBoardContainers[1]);
+  displayBoard();
+  displayBoard();
 }
 
 function computerAttack() {
+  const playerOneBoard = playerOne.gameBoard.getBoard();
   let x = Math.floor(Math.random() * 10);
   let y = Math.floor(Math.random() * 10);
   while (playerOneBoard[x][y] === "hit" || playerOneBoard[x][y] === "miss") {
@@ -157,8 +183,8 @@ function hideStartButtons() {
 export function initializeGame() {
   playerOne.gameBoard.fillBoard();
   playerTwo.gameBoard.fillBoard();
-  displayBoard(playerOneBoard, playerBoardContainers[0]);
-  displayBoard(playerTwoBoard, playerBoardContainers[1]);
+  displayBoard();
+  displayBoard();
   const playerStartButton = document.querySelector(".player-start-button");
   const computerStartButton = document.querySelector(".computer-start-button");
   playerStartButton.addEventListener("click", () => startGamePlayer());
