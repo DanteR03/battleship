@@ -105,7 +105,7 @@ export class Gameboard {
 }
 
 export class Player {
-  constructor() {
+  constructor(name) {
     this.gameBoard = new Gameboard();
   }
 }

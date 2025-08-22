@@ -18,11 +18,6 @@ axisButton.addEventListener("click", () => {
   }
 });
 
-const shipButtons = document.querySelectorAll(".ship-button");
-shipButtons.forEach((button) => {
-  button.addEventListener("click", placeShipButton);
-});
-
 function placeShipButton(event) {
   const ship = event.target.id;
   switch (ship) {
@@ -48,7 +43,11 @@ function placeShipButton(event) {
       break;
   }
   const playerBoardContainers = document.querySelectorAll(".board");
-  playerBoardContainers[0].addEventListener("click", placeShipCell);
+  if (activePlayer === playerOne) {
+    playerBoardContainers[0].addEventListener("click", placeShipCell);
+  } else if (activePlayer === playerTwo) {
+    playerBoardContainers[1].addEventListener("click", placeShipCell);
+  }
 }
 
 function placeShipCell(event) {
@@ -60,19 +59,50 @@ function placeShipCell(event) {
     if (newShipsLength > shipsLength) {
       displayBoard();
       const playerBoardContainers = document.querySelectorAll(".board");
-      playerBoardContainers[0].removeEventListener("click", placeShipCell);
+      if (activePlayer === playerOne) {
+        playerBoardContainers[0].removeEventListener("click", placeShipCell);
+      } else if (activePlayer === playerTwo) {
+        playerBoardContainers[1].removeEventListener("click", placeShipCell);
+      }
       const placingShipButton = document.querySelector(
         `#${CSS.escape(placingShip)}`,
       );
       placingShipButton.removeEventListener("click", placeShipButton);
     }
+    if (
+      newShipsLength > shipsLength &&
+      newShipsLength === 5 &&
+      activePlayer === playerOne
+    ) {
+      activePlayer = playerTwo;
+      const shipButtons = document.querySelectorAll(".ship-button");
+      shipButtons.forEach((button) => {
+        button.addEventListener("click", placeShipButton);
+      });
+    } else if (
+      newShipsLength > shipsLength &&
+      newShipsLength === 5 &&
+      activePlayer === playerTwo
+    ) {
+      activePlayer = playerOne;
+      hideShipButtons();
+      startGamePlayer();
+    }
   }
 }
 
-function startGamePlayer() {
+function initializeGamePlayer() {
   hideStartButtons();
   displayBoard();
-  displayBoard();
+  const shipButtonContainer = document.querySelector(".ship-buttons-container");
+  const shipButtons = document.querySelectorAll(".ship-button");
+  shipButtonContainer.classList.remove("hidden");
+  shipButtons.forEach((button) => {
+    button.addEventListener("click", placeShipButton);
+  });
+}
+
+function startGamePlayer() {
   const playerBoardContainers = document.querySelectorAll(".board");
   playerBoardContainers[0].addEventListener("click", (e) => {
     if (
@@ -108,7 +138,6 @@ function startGamePlayer() {
 
 function startGameComputer() {
   hideStartButtons();
-  displayBoard();
   displayBoard();
   const playerBoardContainers = document.querySelectorAll(".board");
   playerBoardContainers[1].addEventListener("click", (e) => {
@@ -238,16 +267,15 @@ function hideShipButtons() {
   const shipButtonsContainer = document.querySelector(
     ".ship-buttons-container",
   );
-  shipButtonContainer.classList.add("hidden");
+  shipButtonsContainer.classList.add("hidden");
 }
 
 export function initializeGame() {
   playerOne.gameBoard.fillBoard();
   playerTwo.gameBoard.fillBoard();
   displayBoard();
-  displayBoard();
   const playerStartButton = document.querySelector(".player-start-button");
   const computerStartButton = document.querySelector(".computer-start-button");
-  playerStartButton.addEventListener("click", () => startGamePlayer());
+  playerStartButton.addEventListener("click", () => initializeGamePlayer());
   computerStartButton.addEventListener("click", () => startGameComputer());
 }
