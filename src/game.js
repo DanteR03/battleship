@@ -45,17 +45,30 @@ export class Gameboard {
   }
 
   placeShip(start, axis, length) {
-    const coords = start;
-    this.#ships.push(new Ship(length));
+    const coords = [start];
     if (axis === "y") {
-      for (let i = 0; i < length; i++) {
-        this.#board[coords[0]][coords[1]] = this.#ships.length - 1;
-        coords[0]++;
+      for (let i = 0; i < length - 1; i++) {
+        let coordsNext = coords[coords.length - 1].slice();
+        coordsNext[0]++;
+        coords.push(coordsNext);
       }
     } else if (axis === "x") {
-      for (let i = 0; i < length; i++) {
-        this.#board[coords[0]][coords[1]] = this.#ships.length - 1;
-        coords[1]++;
+      for (let i = 0; i < length - 1; i++) {
+        let coordsNext = coords[coords.length - 1].slice();
+        coordsNext[1]++;
+        coords.push(coordsNext);
+      }
+    }
+    console.log(coords);
+    if (
+      coords[coords.length - 1][0] <= 9 &&
+      coords[coords.length - 1][0] >= 0 &&
+      coords[coords.length - 1][1] <= 9 &&
+      coords[coords.length - 1][1] >= 0
+    ) {
+      this.#ships.push(new Ship(length));
+      for (const coord of coords) {
+        this.#board[coord[0]][coord[1]] = this.#ships.length - 1;
       }
     }
   }

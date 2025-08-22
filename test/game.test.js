@@ -56,6 +56,14 @@ describe("Gameboard class", () => {
       expect(board[0][3]).toBe(null);
     });
 
+    it("Shouldn't place ships if it will be placed out of bounds", () => {
+      expect(ships).not.toHaveLength(0);
+      testGameboard.placeShip([8, 8], "x", 3);
+      expect(ships).not.toHaveLength(0);
+      expect(board[8][8]).toBe(null);
+      expect(board[8][9]).toBe(null);
+    });
+
     it("Should record attacks targeting specified coordinates", () => {
       testGameboard.receiveAttack([0, 2]);
       testGameboard.receiveAttack([1, 1]);
