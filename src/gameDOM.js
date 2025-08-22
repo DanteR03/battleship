@@ -2,22 +2,75 @@ import { Player } from "./game.js";
 
 const playerOne = new Player();
 const playerTwo = new Player();
-let axis = "X";
+let axis = "x";
 let activePlayer = playerOne;
+let placingShip;
+let placingShipLength;
+
 const axisButton = document.querySelector("button");
 axisButton.addEventListener("click", () => {
-  if (axis === "X") {
-    axis = "Y";
+  if (axis === "x") {
+    axis = "y";
     axisButton.textContent = "Axis: Y";
   } else {
-    axis = "X";
+    axis = "x";
     axisButton.textContent = "Axis: X";
   }
 });
 
+const shipButtons = document.querySelectorAll(".ship-button");
+shipButtons.forEach((button) => {
+  button.addEventListener("click", placeShipButton);
+});
+
+function placeShipButton(event) {
+  const ship = event.target.id;
+  switch (ship) {
+    case "carrier":
+      placingShipLength = 5;
+      placingShip = ship;
+      break;
+    case "battleship":
+      placingShipLength = 4;
+      placingShip = ship;
+      break;
+    case "destroyer":
+      placingShipLength = 3;
+      placingShip = ship;
+      break;
+    case "submarine":
+      placingShipLength = 3;
+      placingShip = ship;
+      break;
+    case "patrol":
+      placingShipLength = 2;
+      placingShip = ship;
+      break;
+  }
+  const playerBoardContainers = document.querySelectorAll(".board");
+  playerBoardContainers[0].addEventListener("click", placeShipCell);
+}
+
+function placeShipCell(event) {
+  if (event.target.id) {
+    const startCoords = event.target.id.split(",");
+    const shipsLength = activePlayer.gameBoard.getShips().length;
+    placeShip(activePlayer.gameBoard, startCoords, axis, placingShipLength);
+    const newShipsLength = activePlayer.gameBoard.getShips().length;
+    if (newShipsLength > shipsLength) {
+      displayBoard();
+      const playerBoardContainers = document.querySelectorAll(".board");
+      playerBoardContainers[0].removeEventListener("click", placeShipCell);
+      const placingShipButton = document.querySelector(
+        `#${CSS.escape(placingShip)}`,
+      );
+      placingShipButton.removeEventListener("click", placeShipButton);
+    }
+  }
+}
+
 function startGamePlayer() {
   hideStartButtons();
-  populateBoardPredetermined(playerOne.gameBoard, playerTwo.gameBoard);
   displayBoard();
   displayBoard();
   const playerBoardContainers = document.querySelectorAll(".board");
@@ -55,7 +108,6 @@ function startGamePlayer() {
 
 function startGameComputer() {
   hideStartButtons();
-  populateBoardPredetermined(playerOne.gameBoard, playerTwo.gameBoard);
   displayBoard();
   displayBoard();
   const playerBoardContainers = document.querySelectorAll(".board");
@@ -129,17 +181,19 @@ function displayBoard() {
   }
 }
 
-function populateBoardPredetermined(board1, board2) {
-  placeShip(board1, [0, 0], "x", 5);
-  placeShip(board1, [2, 4], "x", 4);
-  placeShip(board1, [5, 0], "y", 3);
-  placeShip(board1, [6, 2], "x", 3);
-  placeShip(board1, [8, 8], "x", 2);
-  placeShip(board2, [1, 4], "x", 5);
-  placeShip(board2, [2, 2], "y", 4);
-  placeShip(board2, [5, 4], "x", 3);
-  placeShip(board2, [6, 7], "y", 3);
-  placeShip(board2, [0, 0], "x", 2);
+function populateBoardPredetermined() {
+  const playerOneBoard = playerOne.gameBoard;
+  const playerTwoBoard = playerTwo.gameBoard;
+  placeShip(playerOneBoard, [0, 0], "x", 5);
+  placeShip(playerOneBoard, [2, 4], "x", 4);
+  placeShip(playerOneBoard, [5, 0], "y", 3);
+  placeShip(playerOneBoard, [6, 2], "x", 3);
+  placeShip(playerOneBoard, [8, 8], "x", 2);
+  placeShip(playerTwoBoard, [1, 4], "x", 5);
+  placeShip(playerTwoBoard, [2, 2], "y", 4);
+  placeShip(playerTwoBoard, [5, 4], "x", 3);
+  placeShip(playerTwoBoard, [6, 7], "y", 3);
+  placeShip(playerTwoBoard, [0, 0], "x", 2);
 }
 
 function placeShip(board, start, axis, length) {
@@ -174,10 +228,17 @@ function computerAttack() {
 }
 
 function hideStartButtons() {
-  const playerStartButton = document.querySelector(".player-start-button");
-  const computerStartButton = document.querySelector(".computer-start-button");
-  playerStartButton.classList.add("hidden");
-  computerStartButton.classList.add("hidden");
+  const startButtonsContainer = document.querySelector(
+    ".start-buttons-container",
+  );
+  startButtonsContainer.classList.add("hidden");
+}
+
+function hideShipButtons() {
+  const shipButtonsContainer = document.querySelector(
+    ".ship-buttons-container",
+  );
+  shipButtonContainer.classList.add("hidden");
 }
 
 export function initializeGame() {

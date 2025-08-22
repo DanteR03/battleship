@@ -59,7 +59,6 @@ export class Gameboard {
         coords.push(coordsNext);
       }
     }
-    console.log(coords);
     if (
       coords[coords.length - 1][0] <= 9 &&
       coords[coords.length - 1][0] >= 0 &&
