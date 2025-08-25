@@ -6,17 +6,7 @@ let axis = "x";
 let activePlayer = playerOne;
 let placingShip;
 let placingShipLength;
-
-const axisButton = document.querySelector("button");
-axisButton.addEventListener("click", () => {
-  if (axis === "x") {
-    axis = "y";
-    axisButton.textContent = "Axis: Y";
-  } else {
-    axis = "x";
-    axisButton.textContent = "Axis: X";
-  }
-});
+let playerTwoAi;
 
 function placeShipButton(event) {
   const ship = event.target.id;
@@ -45,7 +35,7 @@ function placeShipButton(event) {
   const playerBoardContainers = document.querySelectorAll(".board");
   if (activePlayer === playerOne) {
     playerBoardContainers[0].addEventListener("click", placeShipCell);
-  } else if (activePlayer === playerTwo) {
+  } else if (activePlayer === playerTwo && playerTwoAi === false) {
     playerBoardContainers[1].addEventListener("click", placeShipCell);
   }
 }
@@ -72,7 +62,8 @@ function placeShipCell(event) {
     if (
       newShipsLength > shipsLength &&
       newShipsLength === 5 &&
-      activePlayer === playerOne
+      activePlayer === playerOne &&
+      playerTwoAi === false
     ) {
       activePlayer = playerTwo;
       const shipButtons = document.querySelectorAll(".ship-button");
@@ -82,9 +73,22 @@ function placeShipCell(event) {
     } else if (
       newShipsLength > shipsLength &&
       newShipsLength === 5 &&
+      activePlayer === playerOne &&
+      playerTwoAi === true
+    ) {
+      activePlayer = playerTwo;
+      hideShipButtons();
+      computerPlaceShips();
+      activePlayer = playerOne;
+      startGameComputer();
+    } else if (
+      newShipsLength > shipsLength &&
+      newShipsLength === 5 &&
       activePlayer === playerTwo
     ) {
       activePlayer = playerOne;
+      placingShip = "";
+      placingShipLength = "";
       hideShipButtons();
       startGamePlayer();
     }
@@ -94,6 +98,7 @@ function placeShipCell(event) {
 function initializeGamePlayer() {
   hideStartButtons();
   displayBoard();
+  playerTwoAi = false;
   const shipButtonContainer = document.querySelector(".ship-buttons-container");
   const shipButtons = document.querySelectorAll(".ship-button");
   shipButtonContainer.classList.remove("hidden");
@@ -103,6 +108,7 @@ function initializeGamePlayer() {
 }
 
 function startGamePlayer() {
+  hideAxisButton();
   const playerBoardContainers = document.querySelectorAll(".board");
   playerBoardContainers[0].addEventListener("click", (e) => {
     if (
@@ -136,9 +142,20 @@ function startGamePlayer() {
   });
 }
 
-function startGameComputer() {
+function initializeGameComputer() {
   hideStartButtons();
   displayBoard();
+  playerTwoAi = true;
+  const shipButtonContainer = document.querySelector(".ship-buttons-container");
+  const shipButtons = document.querySelectorAll(".ship-button");
+  shipButtonContainer.classList.remove("hidden");
+  shipButtons.forEach((button) => {
+    button.addEventListener("click", placeShipButton);
+  });
+}
+
+function startGameComputer() {
+  hideAxisButton();
   const playerBoardContainers = document.querySelectorAll(".board");
   playerBoardContainers[1].addEventListener("click", (e) => {
     if (
@@ -237,11 +254,11 @@ function registerAttack(player, coords) {
 
 function computerAttack() {
   const playerOneBoard = playerOne.gameBoard.getBoard();
-  let x = Math.floor(Math.random() * 10);
-  let y = Math.floor(Math.random() * 10);
+  let x = generateRandomNumberExclusive(10);
+  let y = generateRandomNumberExclusive(10);
   while (playerOneBoard[x][y] === "hit" || playerOneBoard[x][y] === "miss") {
-    x = Math.floor(Math.random() * 10);
-    y = Math.floor(Math.random() * 10);
+    x = generateRandomNumberExclusive(10);
+    y = generateRandomNumberExclusive(10);
   }
   const coords = [x, y];
   const coordsId = coords.join();
@@ -254,6 +271,60 @@ function computerAttack() {
     console.log("Player Two wins!");
     activePlayer = "";
   }
+}
+
+function computerPlaceShips() {
+  const playerBoard = activePlayer.gameBoard;
+  const ships = ["patrol", "submarine", "destroyer", "battleship", "carrier"];
+  let shipIndex = ships.length - 1;
+  while (playerBoard.getShips().length < 5) {
+    let shipsLengthOld = playerBoard.getShips().length;
+    let randomNumberAxis = generateRandomNumberExclusive(2);
+    let randomNumberX = generateRandomNumberExclusive(10);
+    let randomNumberY = generateRandomNumberExclusive(10);
+    if (randomNumberAxis === 0) {
+      axis = "x";
+    } else {
+      axis = "y";
+    }
+    switch (ships[shipIndex]) {
+      case "carrier":
+        placingShipLength = 5;
+        placingShip = ships[shipIndex];
+        break;
+      case "battleship":
+        placingShipLength = 4;
+        placingShip = ships[shipIndex];
+        break;
+      case "destroyer":
+        placingShipLength = 3;
+        placingShip = ships[shipIndex];
+        break;
+      case "submarine":
+        placingShipLength = 3;
+        placingShip = ships[shipIndex];
+        break;
+      case "patrol":
+        placingShipLength = 2;
+        placingShip = ships[shipIndex];
+        break;
+    }
+    placeShip(
+      playerBoard,
+      [randomNumberX, randomNumberY],
+      axis,
+      placingShipLength,
+    );
+    let shipsLengthNew = playerBoard.getShips().length;
+    if (shipsLengthOld < shipsLengthNew) {
+      shipIndex--;
+      displayBoard();
+    }
+  }
+}
+
+function generateRandomNumberExclusive(upper) {
+  return Math.floor(Math.random() * upper);
 }
 
 function hideStartButtons() {
@@ -270,12 +341,27 @@ function hideShipButtons() {
   shipButtonsContainer.classList.add("hidden");
 }
 
+function hideAxisButton() {
+  const axisButton = document.querySelector("button");
+  axisButton.classList.add("hidden");
+}
+
 export function initializeGame() {
   playerOne.gameBoard.fillBoard();
   playerTwo.gameBoard.fillBoard();
   displayBoard();
   const playerStartButton = document.querySelector(".player-start-button");
   const computerStartButton = document.querySelector(".computer-start-button");
+  const axisButton = document.querySelector("button");
+  axisButton.addEventListener("click", () => {
+    if (axis === "x") {
+      axis = "y";
+      axisButton.textContent = "Axis: Y";
+    } else {
+      axis = "x";
+      axisButton.textContent = "Axis: X";
+    }
+  });
   playerStartButton.addEventListener("click", () => initializeGamePlayer());
-  computerStartButton.addEventListener("click", () => startGameComputer());
+  computerStartButton.addEventListener("click", () => initializeGameComputer());
 }
