@@ -3,7 +3,8 @@ import { Player } from "./game.js";
 const playerOne = new Player();
 const playerTwo = new Player();
 let axis = "x";
-let activePlayer = playerOne;
+let activePlayer;
+let previousActivePlayer;
 let placingShip;
 let placingShipLength;
 let playerTwoAi;
@@ -66,6 +67,7 @@ function placeShipCell(event) {
       playerTwoAi === false
     ) {
       activePlayer = playerTwo;
+      displayBoard();
       const shipButtons = document.querySelectorAll(".ship-button");
       shipButtons.forEach((button) => {
         button.addEventListener("click", placeShipButton);
@@ -109,6 +111,7 @@ function initializeGamePlayer() {
 
 function startGamePlayer() {
   hideAxisButton();
+  displayBoard();
   const playerBoardContainers = document.querySelectorAll(".board");
   playerBoardContainers[0].addEventListener("click", (e) => {
     if (
@@ -121,7 +124,9 @@ function startGamePlayer() {
         console.log("Player Two wins!");
         activePlayer = "";
       } else {
-        activePlayer = playerOne;
+        activePlayer = "";
+        previousActivePlayer = playerTwo;
+        switchTurnButton();
       }
     }
   });
@@ -136,7 +141,9 @@ function startGamePlayer() {
         console.log("Player One wins!");
         activePlayer = "";
       } else {
-        activePlayer = playerTwo;
+        activePlayer = "";
+        previousActivePlayer = playerOne;
+        switchTurnButton();
       }
     }
   });
@@ -185,45 +192,148 @@ function displayBoard() {
   const boardTwoXArray = playerTwoBoard;
   let xCoord = 0;
   let yCoord = 0;
-  for (const yArray of boardOneXArray) {
-    for (const cell of yArray) {
-      const boardCell = document.createElement("div");
-      boardCell.classList.add("board-cell");
-      boardCell.id = [xCoord, yCoord];
-      if (Number.isInteger(cell)) {
-        boardCell.classList.add("ship");
-      } else if (cell === "hit") {
-        boardCell.classList.add("ship");
-        boardCell.classList.add("marked");
-      } else if (cell === "miss") {
-        boardCell.classList.add("marked");
+  if (activePlayer === playerOne) {
+    for (const yArray of boardOneXArray) {
+      for (const cell of yArray) {
+        const boardCell = document.createElement("div");
+        boardCell.classList.add("board-cell");
+        boardCell.id = [xCoord, yCoord];
+        if (Number.isInteger(cell)) {
+          boardCell.classList.add("ship");
+        } else if (cell === "hit") {
+          boardCell.classList.add("ship");
+          boardCell.classList.add("marked");
+        } else if (cell === "miss") {
+          boardCell.classList.add("marked");
+        }
+        playerBoardContainers[0].append(boardCell);
+        yCoord++;
       }
-      playerBoardContainers[0].append(boardCell);
-      yCoord++;
+      yCoord = 0;
+      xCoord++;
     }
+    xCoord = 0;
     yCoord = 0;
-    xCoord++;
-  }
-  xCoord = 0;
-  yCoord = 0;
-  for (const yArray of boardTwoXArray) {
-    for (const cell of yArray) {
-      const boardCell = document.createElement("div");
-      boardCell.classList.add("board-cell");
-      boardCell.id = [xCoord, yCoord];
-      if (Number.isInteger(cell)) {
-        boardCell.classList.add("ship");
-      } else if (cell === "hit") {
-        boardCell.classList.add("ship");
-        boardCell.classList.add("marked");
-      } else if (cell === "miss") {
-        boardCell.classList.add("marked");
+    for (const yArray of boardTwoXArray) {
+      for (const cell of yArray) {
+        const boardCell = document.createElement("div");
+        boardCell.classList.add("board-cell");
+        boardCell.id = [xCoord, yCoord];
+        if (cell === "hit") {
+          boardCell.classList.add("ship");
+          boardCell.classList.add("marked");
+        } else if (cell === "miss") {
+          boardCell.classList.add("marked");
+        }
+        playerBoardContainers[1].append(boardCell);
+        yCoord++;
       }
-      playerBoardContainers[1].append(boardCell);
-      yCoord++;
+      yCoord = 0;
+      xCoord++;
     }
+  } else if (activePlayer === playerTwo && playerTwoAi === true) {
+    for (const yArray of boardOneXArray) {
+      for (const cell of yArray) {
+        const boardCell = document.createElement("div");
+        boardCell.classList.add("board-cell");
+        boardCell.id = [xCoord, yCoord];
+        if (Number.isInteger(cell)) {
+          boardCell.classList.add("ship");
+        } else if (cell === "hit") {
+          boardCell.classList.add("ship");
+          boardCell.classList.add("marked");
+        } else if (cell === "miss") {
+          boardCell.classList.add("marked");
+        }
+        playerBoardContainers[0].append(boardCell);
+        yCoord++;
+      }
+      yCoord = 0;
+      xCoord++;
+    }
+    xCoord = 0;
     yCoord = 0;
-    xCoord++;
+    for (const yArray of boardTwoXArray) {
+      for (const cell of yArray) {
+        const boardCell = document.createElement("div");
+        boardCell.classList.add("board-cell");
+        boardCell.id = [xCoord, yCoord];
+        if (cell === "hit") {
+          boardCell.classList.add("ship");
+          boardCell.classList.add("marked");
+        } else if (cell === "miss") {
+          boardCell.classList.add("marked");
+        }
+        playerBoardContainers[1].append(boardCell);
+        yCoord++;
+      }
+      yCoord = 0;
+      xCoord++;
+    }
+  } else if (activePlayer === playerTwo && playerTwoAi === false) {
+    for (const yArray of boardOneXArray) {
+      for (const cell of yArray) {
+        const boardCell = document.createElement("div");
+        boardCell.classList.add("board-cell");
+        boardCell.id = [xCoord, yCoord];
+        if (cell === "hit") {
+          boardCell.classList.add("ship");
+          boardCell.classList.add("marked");
+        } else if (cell === "miss") {
+          boardCell.classList.add("marked");
+        }
+        playerBoardContainers[0].append(boardCell);
+        yCoord++;
+      }
+      yCoord = 0;
+      xCoord++;
+    }
+    xCoord = 0;
+    yCoord = 0;
+    for (const yArray of boardTwoXArray) {
+      for (const cell of yArray) {
+        const boardCell = document.createElement("div");
+        boardCell.classList.add("board-cell");
+        boardCell.id = [xCoord, yCoord];
+        if (Number.isInteger(cell)) {
+          boardCell.classList.add("ship");
+        } else if (cell === "hit") {
+          boardCell.classList.add("ship");
+          boardCell.classList.add("marked");
+        } else if (cell === "miss") {
+          boardCell.classList.add("marked");
+        }
+        playerBoardContainers[1].append(boardCell);
+        yCoord++;
+      }
+      yCoord = 0;
+      xCoord++;
+    }
+  } else if (activePlayer === "") {
+    for (const yArray of boardOneXArray) {
+      for (const cell of yArray) {
+        const boardCell = document.createElement("div");
+        boardCell.classList.add("board-cell");
+        boardCell.id = [xCoord, yCoord];
+        playerBoardContainers[0].append(boardCell);
+        yCoord++;
+      }
+      yCoord = 0;
+      xCoord++;
+    }
+    xCoord = 0;
+    yCoord = 0;
+    for (const yArray of boardTwoXArray) {
+      for (const cell of yArray) {
+        const boardCell = document.createElement("div");
+        boardCell.classList.add("board-cell");
+        boardCell.id = [xCoord, yCoord];
+        playerBoardContainers[1].append(boardCell);
+        yCoord++;
+      }
+      yCoord = 0;
+      xCoord++;
+    }
   }
 }
 
@@ -248,7 +358,6 @@ function placeShip(board, start, axis, length) {
 
 function registerAttack(player, coords) {
   player.gameBoard.receiveAttack(coords);
-  displayBoard();
   displayBoard();
 }
 
@@ -342,17 +451,51 @@ function hideShipButtons() {
 }
 
 function hideAxisButton() {
-  const axisButton = document.querySelector("button");
+  const axisButton = document.querySelector(".axis-button");
   axisButton.classList.add("hidden");
 }
 
+function switchTurnButton() {
+  const turnButton = document.querySelector(".turn-button");
+  if (turnButton.classList.contains("hidden")) {
+    turnButton.classList.remove("hidden");
+  } else {
+    turnButton.classList.add("hidden");
+  }
+}
+
+function endTurn(e) {
+  displayBoard();
+  const turnButton = document.querySelector(".turn-button");
+  turnButton.textContent = "Start Turn";
+  turnButton.removeEventListener("click", endTurn);
+  turnButton.addEventListener("click", startTurn);
+}
+
+function startTurn(e) {
+  if (previousActivePlayer === playerOne) {
+    activePlayer = playerTwo;
+    previousActivePlayer = playerOne;
+  } else {
+    previousActivePlayer = playerTwo;
+    activePlayer = playerOne;
+  }
+  displayBoard();
+  const turnButton = document.querySelector(".turn-button");
+  turnButton.textContent = "End Turn";
+  turnButton.removeEventListener("click", startTurn);
+  turnButton.addEventListener("click", endTurn);
+  switchTurnButton();
+}
+
 export function initializeGame() {
+  activePlayer = playerOne;
   playerOne.gameBoard.fillBoard();
   playerTwo.gameBoard.fillBoard();
   displayBoard();
   const playerStartButton = document.querySelector(".player-start-button");
   const computerStartButton = document.querySelector(".computer-start-button");
-  const axisButton = document.querySelector("button");
+  const axisButton = document.querySelector(".axis-button");
   axisButton.addEventListener("click", () => {
     if (axis === "x") {
       axis = "y";
@@ -362,6 +505,8 @@ export function initializeGame() {
       axisButton.textContent = "Axis: X";
     }
   });
+  const turnButton = document.querySelector(".turn-button");
+  turnButton.addEventListener("click", endTurn);
   playerStartButton.addEventListener("click", () => initializeGamePlayer());
   computerStartButton.addEventListener("click", () => initializeGameComputer());
 }
